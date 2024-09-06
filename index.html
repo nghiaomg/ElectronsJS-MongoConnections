@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Memory MongoConnections</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.0/codemirror.min.css">
+    <link rel="stylesheet" href="css/dracula.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.0/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.0/mode/javascript/javascript.min.js"></script>
+</head>
+
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <h3 style="color: white;">Memory MongoDB Connections <span style="font-size: 12px; color: #00ED64;">v1.4</span></h3>
+            <div id="connection-form">
+                <input type="text" id="connection-string" placeholder="Nhập connection string" value="mongodb://localhost:27017/">
+                <button id="connect-button">
+                    <span>Connect</span>
+                    <div id="loading-spinner" class="loading-spinner"></div>
+                </button>
+                <div id="connection-error" class="error-message"></div>
+            </div>
+            <div id="database-list" class="grid-container"></div>
+        </div>
+        <div class="main-content">
+            <div class="content-header">
+                <div id="collection-list" class="grid-container"></div>
+            </div>
+            <div class="document-header hidden-before-collection">
+                <div class="collection-info">
+                    <h2 id="current-collection-name"></h2>
+                    <div class="collection-actions">
+                        <button id="new-document-btn" class="primary-btn">
+                            <i class="fas fa-plus"></i> New Document
+                        </button>
+                        <div class="view-tabs">
+                            <button id="table-view-btn" class="view-tab active">Table View</button>
+                            <button id="json-view-btn" class="view-tab">JSON View</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="document-view" class="hidden-before-collection"></div>
+        </div>
+    </div>
+    <div id="modal-container" class="modal-container">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2 id="modal-title">Edit Document</h2>
+            <div class="code-editor-container">
+                <div id="code-editor"></div>
+            </div>
+            <div id="error-message" class="error-message"></div>
+            <div class="modal-buttons">
+                <button id="save-edit" class="primary-btn">Save</button>
+                <button id="cancel-edit" class="secondary-btn">Cancel</button>
+                <button id="format-json" class="secondary-btn">Format JSON</button>
+            </div>
+        </div>
+    </div>
+    <!-- <button id="reload-btn" class="secondary-btn">
+      <i class="fas fa-sync-alt"></i> Reload
+    </button> -->
+    <script src="renderer.js"></script>
+</body>
+
+</html>
