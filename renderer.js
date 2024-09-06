@@ -143,7 +143,11 @@ function displayDatabases(databases) {
       <i class="fas fa-database"></i>
       <span>${db}</span>
     `;
-    dbElement.addEventListener('click', () => loadCollections(db));
+    dbElement.addEventListener('click', () => {
+      loadCollections(db)
+      document.querySelector('.document-header').classList.add('hidden-before-collection')
+      document.querySelector('#document-view').innerHTML = ''
+    });
     dbElement.addEventListener('contextmenu', (e) => showDatabaseContextMenu(e, db));
     dbList.appendChild(dbElement);
   });

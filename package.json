@@ -1,6 +1,6 @@
 {
   "name": "memory-mongo-connections",
-  "version": "1.4.2",
+  "version": "1.4.3",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
@@ -25,12 +25,22 @@
     },
     "win": {
       "target": [
-        "nsis"
+        {
+          "target": "nsis",
+          "arch": [
+            "x64",
+            "ia32"
+          ]
+        }
       ],
-      "icon": "logo.ico"
+      "artifactName": "${productName}-Setup-${version}.${ext}"
     },
     "linux": {
       "icon": "logo.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
     }
   }
 }

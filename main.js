@@ -7,6 +7,7 @@ const {
 } = require('mongodb')
 
 let mainWindow
+let globalConnectionString = ''
 
 function createWindow() {
   mainWindow = new BrowserWindow({
@@ -37,6 +38,9 @@ ipcMain.handle('connect-to-mongodb', async (event, connectionString) => {
     const adminDb = client.db().admin();
     const databasesList = await adminDb.listDatabases();
     await client.close();
+    
+    globalConnectionString = connectionString; // Set the global connection string
+    
     return databasesList.databases.map(db => db.name);
   } catch (error) {
     console.error('Error connecting to MongoDB:', error);
@@ -47,18 +51,21 @@ ipcMain.handle('connect-to-mongodb', async (event, connectionString) => {
   }
 });
 
-ipcMain.handle('get-collections', async(event, {
-  connectionString, dbName
-}) => {
+ipcMain.handle('get-collections', async (event, { dbName }) => {
+  if (!globalConnectionString) {
+    throw new Error('No active connection');
+  }
+
   try {
-      const client = new MongoClient(connectionString)
-      await client.connect()
-      const db = client.db(dbName)
-      const collections = await db.listCollections().toArray()
-      return collections.map(col => col.name)
+    const client = new MongoClient(globalConnectionString);
+    await client.connect();
+    const db = client.db(dbName);
+    const collections = await db.listCollections().toArray();
+    await client.close();
+    return collections.map(col => col.name);
   } catch (error) {
-      console.error('Lỗi lấy danh sách collections:', error)
-      throw error
+    console.error('Error getting collections:', error);
+    throw error;
   }
 })
 
