@@ -45,7 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log('Connection string:', connectionString);
   
     if (loadingSpinner) loadingSpinner.style.display = 'block';
-    if (connectButtonText) connectButtonText.style.opacity = '0';
+    if (connectButtonText) connectButtonText.style.display = 'none';
     if (connectionError) connectionError.style.display = 'none';
     connectButton.disabled = true;
   
@@ -59,14 +59,14 @@ document.addEventListener('DOMContentLoaded', () => {
       displayDatabases(databases);
       showElementsAfterConnect();
     } catch (error) {
-      console.error('Lỗi kết nối:', error);
+      console.error('Connection error:', error);
       if (connectionError) {
-        connectionError.textContent = `Lỗi kết nối: ${error.message}`;
+        connectionError.textContent = `Connection error: ${error.message}`;
         connectionError.style.display = 'block';
       }
     } finally {
       if (loadingSpinner) loadingSpinner.style.display = 'none';
-      if (connectButtonText) connectButtonText.style.opacity = '1';
+      if (connectButtonText) connectButtonText.style.display = 'flex';
       connectButton.disabled = false;
     }
   });

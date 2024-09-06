@@ -171,6 +171,9 @@ input[type="text"] {
 
 #connect-button {
   width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   box-sizing: border-box;
 }
 
@@ -444,4 +447,25 @@ td button{
 .context-menu-item:active {
   background-color: #e0e0e0;
   transform: scale(0.98);
+}
+
+.loading-spinner {
+  display: none;
+  width: 20px;
+  height: 20px;
+  border: 2px solid #f3f3f3;
+  border-top: 2px solid var(--primary-dark);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.error-message {
+  color: #ff0000;
+  margin-top: 10px;
+  display: none;
 }

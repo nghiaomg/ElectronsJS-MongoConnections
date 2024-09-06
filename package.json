@@ -1,33 +1,36 @@
 {
-  "name": "Memory Mongo Connections",
+  "name": "memory-mongo-connections",
   "version": "1.4.2",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
-    "build": "electron-builder"
+    "build": "electron-builder build --win --publish never",
+    "deploy": "electron-builder build --win --publish always"
   },
   "author": "nghiaomg",
   "license": "ISC",
   "devDependencies": {
-    "electron": "^x.x.x",
-    "electron-builder": "^x.x.x"
+    "electron": "^32.0.2",
+    "electron-builder": "^25.0.5"
   },
   "dependencies": {
+    "mongodb": "^6.8.0",
+    "path": "^0.12.7"
   },
   "build": {
-    "appId": "com.memory.mongoconnections",
-    "productName": "Memory Mongo Connections",
+    "appId": "com.MemoryPlatform.ElectronsJSMongoConnections",
+    "productName": "ElectronsJS-MongoConnections",
     "directories": {
       "output": "dist"
     },
     "win": {
-      "target": "nsis",
+      "target": [
+        "nsis"
+      ],
       "icon": "logo.ico"
     },
-    "nsis": {
-      "oneClick": false,
-      "allowToChangeInstallationDirectory": true
-    },
-    "icon": "logo.png"
+    "linux": {
+      "icon": "logo.ico"
+    }
   }
 }

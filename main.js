@@ -18,7 +18,7 @@ function createWindow() {
       contextIsolation: true
     },
     autoHideMenuBar: true,
-    icon: path.join(__dirname, 'logo.png')
+    icon: path.join(__dirname, 'logo.ico')
   })
 
   mainWindow.loadFile('index.html')
