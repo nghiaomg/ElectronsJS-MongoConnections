@@ -2,71 +2,129 @@
 <html>
 
 <head>
-    <title>My MongoDB Connections</title>
-    <link rel="stylesheet" href="css/styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Fira+Code&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.0/codemirror.min.css">
-    <link rel="stylesheet" href="css/dracula.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.0/codemirror.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.0/mode/javascript/javascript.min.js"></script>
+    <meta charset="UTF-8">
+    <title>ElectronsJS-MongoConnections</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/dracula.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
 </head>
 
 <body>
-    <div class="container">
-        <div class="sidebar">
-            <h3 style="color: white;">Memory MongoDB Connections <span style="font-size: 12px; color: #00ED64;">v1.4</span></h3>
-            <div id="connection-form">
-                <input type="text" id="connection-string" placeholder="Nhập connection string" value="mongodb://localhost:27017/">
-                <button id="connect-button">
-                    <span>Connect</span>
-                    <div id="loading-spinner" class="loading-spinner"></div>
-                </button>
-                <div id="connection-error" class="error-message"></div>
-            </div>
-            <div id="database-list" class="grid-container"></div>
+    <div class="title-bar">
+        <div class="title-bar-title">
+            <i class="fas fa-database"></i>
+            ElectronsJS-MongoConnections
         </div>
-        <div class="main-content">
-            <div class="content-header">
-                <div id="collection-list" class="grid-container"></div>
+        <div class="title-bar-buttons">
+            <button class="title-bar-button" id="minimizeBtn">
+                <i class="fas fa-minus"></i>
+            </button>
+            <button class="title-bar-button" id="maximizeBtn">
+                <i class="fas fa-expand"></i>
+            </button>
+            <button class="title-bar-button close" id="closeBtn">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    </div>
+    <div class="container">
+        <div class="connection-section">
+            <div class="connection-wrapper">
+                <input type="text" id="connection-string" placeholder="MongoDB Connection String" value="mongodb://localhost:27017/">
+                <div class="connection-history" id="connection-history"></div>
             </div>
-            <div class="document-header hidden-before-collection">
-                <div class="collection-info">
-                    <h2 id="current-collection-name"></h2>
-                    <div class="collection-actions">
+            <button id="connect-button">
+                <div id="loading-spinner" class="spinner" style="display: none;"></div>
+                <span>Connect</span>
+            </button>
+            <div id="connection-error" class="error-message" style="display: none;"></div>
+        </div>
+
+        <div class="content">
+            <div class="sidebar">
+                <div id="database-list"></div>
+                <div id="collection-list"></div>
+            </div>
+
+            <div class="main-content">
+                <div class="document-header hidden-before-collection">
+                    <div class="header-left">
+                        <h2 id="current-collection-name"></h2>
+                        <button id="reload-btn" class="icon-btn">
+                            <i class="fas fa-sync-alt"></i>
+                        </button>
+                    </div>
+                    <div class="header-right">
                         <button id="new-document-btn" class="primary-btn">
                             <i class="fas fa-plus"></i> New Document
                         </button>
-                        <div class="view-tabs">
-                            <button id="table-view-btn" class="view-tab active">Table View</button>
-                            <button id="json-view-btn" class="view-tab">JSON View</button>
+                        <div class="view-toggle">
+                            <button id="table-view-btn" class="active">
+                                <i class="fas fa-table"></i>
+                            </button>
+                            <button id="json-view-btn">
+                                <i class="fas fa-code"></i>
+                            </button>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div id="document-view" class="hidden-before-collection"></div>
-        </div>
-    </div>
-    <div id="modal-container" class="modal-container">
-        <div class="modal-content">
-            <span class="close-modal">&times;</span>
-            <h2 id="modal-title">Edit Document</h2>
-            <div class="code-editor-container">
-                <div id="code-editor"></div>
-            </div>
-            <div id="error-message" class="error-message"></div>
-            <div class="modal-buttons">
-                <button id="save-edit" class="primary-btn">Save</button>
-                <button id="cancel-edit" class="secondary-btn">Cancel</button>
-                <button id="format-json" class="secondary-btn">Format JSON</button>
+                <div id="document-view"></div>
             </div>
         </div>
     </div>
-    <!-- <button id="reload-btn" class="secondary-btn">
-      <i class="fas fa-sync-alt"></i> Reload
-    </button> -->
-    <script src="renderer.js"></script>
+
+    <div id="modal-container" class="modal">
+        <div class="modal-content"></div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/javascript/javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/closebrackets.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/matchbrackets.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/fold/foldcode.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/fold/foldgutter.min.js"></script>
+    <script type="module" src="src/js/main.js"></script>
+    <script>
+        // Add window control event listeners
+        const minimizeBtn = document.getElementById('minimizeBtn');
+        const maximizeBtn = document.getElementById('maximizeBtn');
+        const closeBtn = document.getElementById('closeBtn');
+        const maximizeIcon = maximizeBtn.querySelector('i');
+
+        minimizeBtn.addEventListener('click', () => {
+            window.electronAPI.minimizeWindow();
+        });
+        
+        maximizeBtn.addEventListener('click', () => {
+            window.electronAPI.maximizeWindow();
+        });
+        
+        closeBtn.addEventListener('click', () => {
+            window.electronAPI.closeWindow();
+        });
+
+        // Handle window maximize/restore events
+        window.electronAPI.onMaximize(() => {
+            maximizeIcon.classList.remove('fa-expand');
+            maximizeIcon.classList.add('fa-compress');
+        });
+
+        window.electronAPI.onUnmaximize(() => {
+            maximizeIcon.classList.remove('fa-compress');
+            maximizeIcon.classList.add('fa-expand');
+        });
+
+        // Add double click to title bar for maximize/restore
+        const titleBar = document.querySelector('.title-bar');
+        titleBar.addEventListener('dblclick', (e) => {
+            // Prevent double click on buttons
+            if (!e.target.closest('.title-bar-buttons')) {
+                window.electronAPI.maximizeWindow();
+            }
+        });
+    </script>
 </body>
 
 </html>

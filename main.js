@@ -18,14 +18,41 @@ function createWindow() {
       nodeIntegration: false,
       contextIsolation: true
     },
+    frame: false,
     autoHideMenuBar: true,
     icon: path.join(__dirname, 'logo.ico')
   })
 
   mainWindow.loadFile('index.html')
+
+  // Add window state change handlers
+  mainWindow.on('maximize', () => {
+    mainWindow.webContents.send('window-maximized');
+  });
+
+  mainWindow.on('unmaximize', () => {
+    mainWindow.webContents.send('window-unmaximized');
+  });
 }
 
 app.whenReady().then(createWindow)
+
+// Add window control handlers
+ipcMain.on('minimize-window', () => {
+  mainWindow.minimize()
+})
+
+ipcMain.on('maximize-window', () => {
+  if (mainWindow.isMaximized()) {
+    mainWindow.unmaximize()
+  } else {
+    mainWindow.maximize()
+  }
+})
+
+ipcMain.on('close-window', () => {
+  mainWindow.close()
+})
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') app.quit()
@@ -88,19 +115,55 @@ ipcMain.handle('get-documents', async(event, {
 ipcMain.handle('update-document', async (event, { connectionString, dbName, collectionName, documentId, updatedDoc }) => {
   let client;
   try {
+    // Validate input parameters
+    if (!connectionString || !dbName || !collectionName || !documentId || !updatedDoc) {
+      throw new Error('Missing required parameters');
+    }
+
+    // Validate ObjectId
+    let _id;
+    try {
+      _id = new ObjectId(documentId);
+    } catch (error) {
+      throw new Error('Invalid document ID format');
+    }
+
     client = new MongoClient(connectionString);
     await client.connect();
     const db = client.db(dbName);
     const collection = db.collection(collectionName);
-
-    const _id = new ObjectId(documentId);
     
+    // Ensure updatedDoc is a valid object
+    if (typeof updatedDoc !== 'object' || updatedDoc === null || Array.isArray(updatedDoc)) {
+      throw new Error('Updated document must be a valid object');
+    }
+
+    // Remove _id if present in updatedDoc
     if (updatedDoc._id) {
       delete updatedDoc._id;
     }
 
-    const result = await collection.updateOne({ _id }, { $set: updatedDoc });
+    console.log('Updating document:', {
+      filter: { _id },
+      update: updatedDoc
+    });
+
+    const result = await collection.updateOne(
+      { _id },
+      { $set: updatedDoc }
+    );
+
+    if (result.matchedCount === 0) {
+      throw new Error('Document not found');
+    }
+
+    if (result.modifiedCount === 0) {
+      throw new Error('No changes were made to the document');
+    }
+
+    console.log('Update result:', result);
     return result.modifiedCount === 1;
+
   } catch (error) {
     console.error('Error updating document:', error);
     throw error;

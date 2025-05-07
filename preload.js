@@ -15,6 +15,11 @@ contextBridge.exposeInMainWorld('electronAPI', {
   createCollection: (data) => ipcRenderer.invoke('create-collection', data),
   createDocument: (data) => ipcRenderer.invoke('create-document', data),
   deleteDocument: (data) => ipcRenderer.invoke('delete-document', data),
+  minimizeWindow: () => ipcRenderer.send('minimize-window'),
+  maximizeWindow: () => ipcRenderer.send('maximize-window'),
+  closeWindow: () => ipcRenderer.send('close-window'),
+  onMaximize: (callback) => ipcRenderer.on('window-maximized', callback),
+  onUnmaximize: (callback) => ipcRenderer.on('window-unmaximized', callback),
 })
 
 console.log('Preload: electronAPI đã được expose')
