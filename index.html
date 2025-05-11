@@ -85,6 +85,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/matchbrackets.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/fold/foldcode.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/fold/foldgutter.min.js"></script>
+    <!-- Memory monitoring utility -->
+    <script src="memory-monitor.js"></script>
     <script type="module" src="src/js/main.js"></script>
     <script>
         // Add window control event listeners
@@ -124,6 +126,17 @@
                 window.electronAPI.maximizeWindow();
             }
         });
+
+        // Start memory monitoring in development mode
+        if (process.env.NODE_ENV === 'development') {
+            // Start memory monitoring with 60 second interval
+            const stopMonitoring = window.memoryMonitor.startMemoryMonitor(60000);
+            
+            // Clean up on window unload
+            window.addEventListener('beforeunload', () => {
+                if (stopMonitoring) stopMonitoring();
+            });
+        }
     </script>
 </body>
 
