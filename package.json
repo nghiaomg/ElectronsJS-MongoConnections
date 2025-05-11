@@ -1,11 +1,15 @@
 {
   "name": "memory-mongo-connections",
   "version": "2.1.0",
+  "description": "AskMongo - A MongoDB client with AI assistance for query generation",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
     "dev": "cross-env NODE_ENV=development electron --js-flags=\"--expose-gc\" .",
     "build": "electron-builder build --win --publish never",
+    "build:mac": "electron-builder build --mac --publish never",
+    "build:linux": "electron-builder build --linux --publish never",
+    "build:all": "electron-builder build --win --linux --publish never",
     "deploy": "electron-builder build --win --publish always"
   },
   "author": "nghiaomg",
@@ -34,8 +38,14 @@
       ],
       "icon": "logo.ico"
     },
+    "mac": {
+      "target": ["dmg", "zip"],
+      "icon": "logo.ico",
+      "category": "public.app-category.developer-tools"
+    },
     "linux": {
-      "icon": "logo.ico"
+      "icon": "logo.ico",
+      "target": ["AppImage", "deb"]
     }
   }
 }
