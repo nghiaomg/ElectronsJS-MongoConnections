@@ -30,6 +30,28 @@ The application has been optimized to reduce memory usage from 150MB to approxim
 
 - Added memory usage monitoring that logs memory stats every 30 seconds
 - Implemented optional garbage collection triggering when heap usage exceeds threshold
+- Created visual memory monitoring panel in development mode (see Development Tools section)
+
+## Development Tools
+
+### Memory Monitoring Panel
+
+In development mode, a memory monitoring panel is available:
+
+1. Click the 🧠 button in the top-right corner to open the panel
+2. The panel shows:
+   - Live memory usage stats (RSS, Heap Total, Heap Used, External)
+   - Memory usage graph over time
+   - GC button to manually trigger garbage collection
+
+This panel helps:
+- Identify memory leaks and usage patterns
+- Monitor the effects of operations on memory usage
+- Trigger garbage collection to see if memory issues are related to GC
+
+### Console Memory Monitoring
+
+In addition to the visual panel, detailed memory stats are logged to the console at regular intervals.
 
 ## Additional Memory Optimization Tips
 
@@ -39,7 +61,7 @@ To identify memory leaks in the application:
 
 1. Run the application with the `--js-flags="--expose-gc"` flag to enable manual garbage collection:
    ```
-   electron --js-flags="--expose-gc" .
+   npm run dev
    ```
 
 2. Use Chrome DevTools to take heap snapshots:
@@ -68,7 +90,12 @@ To identify memory leaks in the application:
 
 If you encounter memory issues:
 
-1. Use the built-in memory monitoring feature to log memory usage
-2. In development mode, use the exposed GC API to force garbage collection: `await window.electronAPI.forceGC()`
+1. Use the built-in memory monitoring panel in development mode
+2. In development mode, use the exposed GC API: `await window.electronAPI.forceGC()`
 3. Check memory stats with: `const stats = await window.electronAPI.getMemoryStats()`
-4. Use the Allocation Timeline in Chrome DevTools to identify when memory spikes occur 
+4. Use the Allocation Timeline in Chrome DevTools to identify when memory spikes occur
+5. Look for common patterns in memory leaks:
+   - Event listeners not being removed
+   - Unused connections remaining open
+   - Large data being cached unnecessarily
+   - Circular references preventing garbage collection 

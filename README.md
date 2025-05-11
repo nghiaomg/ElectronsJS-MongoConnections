@@ -1,13 +1,21 @@
-# ElectronsJS-MongoConnections v2.0
+# AskMongo v2.1
 
-ElectronsJS-MongoConnections là một ứng dụng desktop được xây dựng bằng Electron và JavaScript, cho phép người dùng kết nối và quản lý cơ sở dữ liệu MongoDB một cách trực quan.
+AskMongo (trước đây là ElectronsJS-MongoConnections) là một ứng dụng desktop được xây dựng bằng Electron và JavaScript, cho phép người dùng kết nối và quản lý cơ sở dữ liệu MongoDB một cách trực quan với trợ lý AI tích hợp.
 
 ![Demo](https://ik.imagekit.io/0lpnflx37/images/MongoConnection/Screenshot%202025-05-07%20180731.png?updatedAt=1746616179035)
 
-## Tính năng mới trong v2.0
+## Tính năng mới trong v2.1
+
+- **GEMINI AI Assistant**: Trợ lý AI giúp tạo truy vấn MongoDB dễ dàng bằng ngôn ngữ tự nhiên
+- Hiển thị thông báo lỗi đẹp hơn với hướng dẫn chi tiết
+- Textarea truy vấn cải tiến: có thể mở rộng và hỗ trợ nhiều dòng
+- Thêm phím tắt Ctrl+Enter để chạy truy vấn
+- AI Assistant nhận biết context cơ sở dữ liệu hiện tại để đưa ra gợi ý chính xác
+
+## Tính năng từ v2.0
 
 - Toast notifications cho các thao tác thành công
-- Giao diện người dùng được cải thiện với hiệu ứng mượt mà
+- Giao diện người dùng với hiệu ứng mượt mà
 - Hỗ trợ lưu lịch sử kết nối (tối đa 5 kết nối gần nhất)
 - Tự động kết nối lại với database/collection đã chọn sau khi reload
 
@@ -25,12 +33,12 @@ ElectronsJS-MongoConnections là một ứng dụng desktop được xây dựng
 
 1. Clone repository này:
    ```bash
-   git clone https://github.com/nghiaomg/ElectronsJS-MongoConnections.git
+   git clone https://github.com/nghiaomg/AskMongo.git
    ```
 
 2. Di chuyển vào thư mục dự án:
    ```bash
-   cd ElectronsJS-MongoConnections
+   cd AskMongo
    ```
 
 3. Cài đặt các dependencies:
@@ -51,10 +59,19 @@ ElectronsJS-MongoConnections là một ứng dụng desktop được xây dựng
 4. Duyệt qua các databases và collections
 5. Sử dụng menu ngữ cảnh (chuột phải) để thực hiện các thao tác với databases và collections
 6. Xem và chỉnh sửa documents trong chế độ Table View hoặc JSON View
-7. Nhận thông báo toast khi thao tác thành công
+7. Sử dụng GEMINI AI Assistant để tạo truy vấn MongoDB bằng ngôn ngữ tự nhiên
+
+## Sử dụng GEMINI AI Assistant
+
+1. Chọn database và collection để cung cấp context cho AI
+2. Nhấn nút robot bên cạnh ô nhập truy vấn
+3. Nhập mô tả truy vấn bạn muốn thực hiện bằng ngôn ngữ tự nhiên (ví dụ: "Tìm tất cả user đăng ký trong tháng này")
+4. Nhấn "Ask GEMINI" để AI tạo truy vấn MongoDB
+5. Nhấn "Use This Query" để sử dụng truy vấn được tạo
 
 ## Các phím tắt
 
+- `Ctrl + Enter`: Chạy truy vấn MongoDB 
 - `Ctrl + R` hoặc `F5`: Reload dữ liệu
 - `Ctrl + N`: Tạo document mới
 - `Ctrl + S`: Lưu chỉnh sửa document
@@ -65,6 +82,14 @@ ElectronsJS-MongoConnections là một ứng dụng desktop được xây dựng
 Mọi đóng góp đều được hoan nghênh. Vui lòng mở một issue để thảo luận về những thay đổi lớn trước khi thực hiện.
 
 ## Changelog
+
+### v2.1
+- Tích hợp GEMINI AI Assistant cho việc tạo truy vấn bằng ngôn ngữ tự nhiên
+- Cải thiện hiển thị lỗi với thông báo chi tiết hơn
+- Nâng cấp textarea truy vấn với khả năng mở rộng và hỗ trợ nhiều dòng
+- Thêm phím tắt Ctrl+Enter để chạy truy vấn
+- AI nhận biết context cơ sở dữ liệu hiện tại
+- Đổi tên dự án thành AskMongo
 
 ### v2.0
 - Thêm toast notifications

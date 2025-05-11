@@ -44,28 +44,60 @@
 
         <div class="content">
             <div class="sidebar">
-                <div id="database-list"></div>
-                <div id="collection-list"></div>
+                <div id="database-list">
+                    <div class="search-container">
+                        <input type="text" id="database-search" placeholder="Search databases..." class="search-input">
+                        <i class="fas fa-search search-icon"></i>
+                    </div>
+                    <div id="database-items"></div>
+                </div>
+                <div id="collection-list">
+                    <div class="search-container">
+                        <input type="text" id="collection-search" placeholder="Search collections..." class="search-input">
+                        <i class="fas fa-search search-icon"></i>
+                    </div>
+                    <div id="collection-items"></div>
+                </div>
             </div>
 
             <div class="main-content">
                 <div class="document-header hidden-before-collection">
-                    <div class="header-left">
-                        <h2 id="current-collection-name"></h2>
-                        <button id="reload-btn" class="icon-btn">
-                            <i class="fas fa-sync-alt"></i>
-                        </button>
-                    </div>
-                    <div class="header-right">
-                        <button id="new-document-btn" class="primary-btn">
-                            <i class="fas fa-plus"></i> New Document
-                        </button>
-                        <div class="view-toggle">
-                            <button id="table-view-btn" class="active">
-                                <i class="fas fa-table"></i>
+                    <div class="document-header-container">
+                        <div class="header-left">
+                            <h2 id="current-collection-name"></h2>
+                            <button id="reload-btn" class="icon-btn">
+                                <i class="fas fa-sync-alt"></i>
                             </button>
-                            <button id="json-view-btn">
-                                <i class="fas fa-code"></i>
+                        </div>
+                        <div class="header-right">
+                            <button id="new-document-btn" class="primary-btn">
+                                <i class="fas fa-plus"></i> New Document
+                            </button>
+                            <div class="view-toggle">
+                                <button id="table-view-btn" class="active">
+                                    <i class="fas fa-table"></i>
+                                </button>
+                                <button id="json-view-btn">
+                                    <i class="fas fa-code"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="query-bar">
+                        <div class="query-input-container">
+                            <i class="fas fa-search query-icon"></i>
+                            <textarea id="query-input" placeholder="Nhập truy vấn MongoDB (Ví dụ: {name: 'John'}) - Nhấn Ctrl+Enter để chạy" rows="1" title="Sử dụng Enter để xuống dòng, Ctrl+Enter để chạy truy vấn"></textarea>
+                            <div class="query-tooltip">Nhấn Ctrl+Enter để chạy truy vấn</div>
+                        </div>
+                        <button id="run-query-btn" class="primary-btn">
+                            <i class="fas fa-play"></i> Run Query
+                        </button>
+                        <div class="query-buttons">
+                            <button id="fullscreen-btn" class="icon-btn" title="Toggle Query Fullscreen">
+                                <i class="fas fa-expand-arrows-alt"></i>
+                            </button>
+                            <button id="gemini-btn" class="icon-btn" title="GEMINI AI Assistant">
+                                <i class="fas fa-robot"></i>
                             </button>
                         </div>
                     </div>
@@ -87,6 +119,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/fold/foldgutter.min.js"></script>
     <!-- Memory monitoring utility -->
     <script src="memory-monitor.js"></script>
+    <!-- Memory UI panel for development -->
+    <script src="memory-ui.js"></script>
     <script type="module" src="src/js/main.js"></script>
     <script>
         // Add window control event listeners

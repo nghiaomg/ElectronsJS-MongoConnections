@@ -135,4 +135,22 @@ export async function renameCollection({ connectionString, dbName, oldCollection
     console.error("Error renaming collection:", error);
     throw error;
   }
+}
+
+export async function getCollectionFields({ connectionString, dbName, collectionName }) {
+  try {
+    return await window.electronAPI.getCollectionFields({ connectionString, dbName, collectionName });
+  } catch (error) {
+    console.error("Error getting collection fields:", error);
+    throw error;
+  }
+}
+
+export async function executeQuery({ connectionString, dbName, collectionName, queryCode }) {
+  try {
+    return await window.electronAPI.executeQuery({ connectionString, dbName, collectionName, queryCode });
+  } catch (error) {
+    console.error("Error executing query:", error);
+    throw error;
+  }
 } 

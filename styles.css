@@ -234,9 +234,15 @@ body {
 
 .document-header {
   display: flex;
+  flex-direction: column;
+  margin-bottom: 20px;
+}
+
+.document-header-container {
+  display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
 }
 
 .header-left {
@@ -410,6 +416,7 @@ body {
   background-color: rgba(0, 0, 0, 0.5);
   justify-content: center;
   align-items: center;
+  z-index: 10000;
 }
 
 .modal-content {
@@ -419,6 +426,7 @@ body {
   width: 90%;
   max-width: 500px;
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+  z-index: 10001;
 }
 
 .modal-content h2 {
@@ -517,21 +525,25 @@ body {
   font-size: 1.1em;
 }
 
-/* Error message improvements */
+/* Cải thiện hiển thị thông báo lỗi */
 .error-message {
   width: 100%;
   color: var(--error-color);
   margin-top: 10px;
-  padding: 12px;
-  border-radius: 4px;
+  padding: 15px;
+  border-radius: 6px;
   background-color: rgba(255, 68, 68, 0.1);
   border: 1px solid rgba(255, 68, 68, 0.2);
   display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 0.9em;
-  line-height: 1.4;
+  align-items: flex-start;
+  gap: 12px;
+  font-size: 0.95em;
+  line-height: 1.5;
   word-break: break-word;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  animation: errorFadeIn 0.3s ease-out;
+  max-height: 300px;
+  overflow-y: auto;
 }
 
 .error-message:empty {
@@ -542,8 +554,126 @@ body {
   content: '\f071';
   font-family: 'Font Awesome 6 Free';
   font-weight: 900;
-  font-size: 1.1em;
+  font-size: 1.2em;
   margin-right: 5px;
+  color: #ff4a4a;
+  flex-shrink: 0;
+}
+
+.error-message code {
+  background: rgba(0, 0, 0, 0.2);
+  padding: 2px 5px;
+  border-radius: 3px;
+  font-family: 'Fira Code', monospace;
+  color: #ff9999;
+}
+
+.error-message .error-title {
+  font-weight: bold;
+  display: block;
+  margin-bottom: 5px;
+}
+
+.error-message .error-details {
+  font-family: 'Fira Code', monospace;
+  background: rgba(0, 0, 0, 0.2);
+  padding: 8px;
+  border-radius: 4px;
+  margin-top: 8px;
+  white-space: pre-wrap;
+  font-size: 0.9em;
+  border-left: 3px solid #ff4a4a;
+}
+
+.error-message .error-help {
+  display: block;
+  margin-top: 8px;
+  font-style: italic;
+  opacity: 0.8;
+}
+
+@keyframes errorFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Toast cho thông báo lỗi */
+.error-toast {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  max-width: 400px;
+  background-color: #2c2c2c;
+  color: white;
+  border-left: 4px solid var(--error-color);
+  padding: 15px;
+  border-radius: 4px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  z-index: 9500;
+  display: flex;
+  align-items: flex-start;
+  animation: toastSlideIn 0.3s forwards;
+}
+
+.error-toast.closing {
+  animation: toastSlideOut 0.3s forwards;
+}
+
+.error-toast i {
+  color: var(--error-color);
+  margin-right: 10px;
+  font-size: 1.2em;
+}
+
+.error-toast .toast-content {
+  flex: 1;
+}
+
+.error-toast .toast-title {
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.error-toast .toast-close {
+  color: #999;
+  background: none;
+  border: none;
+  font-size: 1.1em;
+  cursor: pointer;
+  padding: 0 5px;
+  margin-left: 10px;
+}
+
+.error-toast .toast-close:hover {
+  color: white;
+}
+
+@keyframes toastSlideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes toastSlideOut {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%);
+    opacity: 0;
+  }
 }
 
 /* Button improvements */
@@ -835,4 +965,313 @@ td:last-child {
 
 .new-collection-name{
     margin-bottom: 10px;
+}
+
+/* Search Inputs for Database and Collection Lists */
+.search-container {
+  position: relative;
+  margin-bottom: 10px;
+}
+
+.search-input {
+  width: 100%;
+  padding: 8px 10px 8px 32px;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  background-color: var(--input-background);
+  color: var(--text-color);
+  font-size: 0.9em;
+  transition: border-color 0.2s ease;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 1px rgba(0, 237, 100, 0.2);
+}
+
+.search-icon {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #666;
+  font-size: 0.9em;
+  pointer-events: none;
+}
+
+.search-input::placeholder {
+  color: #666;
+  font-style: italic;
+}
+
+.no-results {
+  padding: 10px;
+  color: #888;
+  font-style: italic;
+  text-align: center;
+  font-size: 0.9em;
+}
+
+/* Highlight search matches */
+.search-highlight {
+  background-color: rgba(0, 237, 100, 0.2);
+  padding: 0 2px;
+  border-radius: 2px;
+}
+
+/* Query bar styling */
+.query-bar {
+  display: flex;
+  gap: 10px;
+  background-color: var(--hover-color);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  padding: 10px;
+  align-items: center;
+}
+
+#run-query-btn {
+  white-space: nowrap;
+  padding: 10px 15px;
+  font-size: 0.9em;
+  min-width: auto;
+}
+
+#run-query-btn i {
+  margin-right: 5px;
+}
+
+/* Query input container should grow and shrink */
+.query-input-container {
+  flex: 1;
+  min-width: 0;
+  position: relative;
+}
+
+.query-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #666;
+}
+
+.query-tooltip {
+  position: absolute;
+  top: -25px;
+  right: 10px;
+  background-color: var(--hover-color);
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-size: 0.8em;
+  color: #aaa;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+#query-input:focus + .query-tooltip {
+  opacity: 1;
+}
+
+#query-input {
+  width: 100%;
+  padding: 12px 12px 12px 35px;
+  border: 1px solid var(--border-color);
+  background-color: var(--input-background);
+  color: var(--text-color);
+  border-radius: 4px;
+  font-family: "Fira Code", monospace;
+  font-size: 0.9em;
+  resize: vertical;
+  overflow-y: auto;
+  min-height: 60px;
+  max-height: 200px;
+  line-height: 1.5;
+  transition: min-height 0.2s ease, border-color 0.2s ease;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+#query-input:focus {
+  min-height: 80px;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 1px rgba(0, 237, 100, 0.2);
+}
+
+.query-bar:not(.fullscreen-query) #query-input:focus {
+  min-height: 80px;
+}
+
+/* Tùy chỉnh cho chế độ toàn màn hình */
+.fullscreen-input {
+  height: calc(100% - 40px) !important;
+  font-size: 16px !important;
+  line-height: 1.6 !important;
+  resize: none;
+  overflow-y: auto;
+  padding: 15px !important;
+  min-height: 200px !important;
+}
+
+.query-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+#fullscreen-btn,
+#gemini-btn {
+  padding: 10px;
+  background-color: var(--background-color);
+  border: 1px solid var(--border-color);
+  color: var(--text-color);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+#fullscreen-btn:hover,
+#gemini-btn:hover {
+  background-color: var(--hover-color);
+  color: var(--primary-color);
+}
+
+#gemini-btn {
+  color: #4285F4;
+}
+
+#gemini-btn:hover {
+  color: #34A853;
+}
+
+/* Code output in GEMINI modal */
+.code-output {
+  background-color: var(--background-color);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  padding: 15px;
+  margin-top: 8px;
+  overflow-x: auto;
+  font-family: "Fira Code", monospace;
+  font-size: 0.9em;
+  line-height: 1.5;
+}
+
+.code-output pre {
+  margin: 0;
+  white-space: pre-wrap;
+}
+
+/* Fullscreen query input styles */
+.query-bar.fullscreen-query {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 100;
+  height: 50%;
+  background-color: var(--background-color);
+  border-radius: 0;
+  padding: 20px;
+  margin: 0;
+}
+
+.reduced-height {
+  height: 50% !important;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+/* Positioning for error messages within query area */
+.document-header .error-message {
+  margin-top: 5px;
+  position: relative;
+  z-index: 50;
+  animation: errorSlideDown 0.3s ease-out;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+@keyframes errorSlideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+    max-height: 0;
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    max-height: 200px;
+  }
+}
+
+/* Красивые диалоги ошибок */
+.dialog-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.dialog-container {
+  background-color: var(--background-color);
+  border-radius: 8px;
+  width: 90%;
+  max-width: 500px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+  animation: dialogSlideUp 0.3s ease-out;
+}
+
+.dialog-header {
+  padding: 15px 20px;
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.dialog-header-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1.1em;
+  font-weight: 500;
+}
+
+.dialog-header-title i {
+  color: var(--error-color);
+}
+
+.dialog-content {
+  padding: 20px;
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+.dialog-message {
+  color: var(--text-color);
+  line-height: 1.5;
+  margin-bottom: 15px;
+}
+
+.dialog-actions {
+  padding: 15px 20px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  border-top: 1px solid var(--border-color);
+}
+.modal-container{
+  z-index: 9999;
 }

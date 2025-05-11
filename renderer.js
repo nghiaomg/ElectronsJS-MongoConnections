@@ -123,9 +123,43 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
+// Global variables to store the original full lists
+let fullDatabaseList = [];
+let fullCollectionList = [];
+
 function displayDatabases(databases) {
-  const dbList = document.getElementById("database-list");
-  dbList.innerHTML = "";
+  // Store the full list
+  fullDatabaseList = databases;
+  
+  const dbListContainer = document.getElementById("database-list");
+  let dbItemsContainer = document.getElementById("database-items");
+  let searchInput = document.getElementById("database-search");
+  
+  // Check if we need to create the structure
+  if (!dbItemsContainer || !searchInput) {
+    // Clear container
+    dbListContainer.innerHTML = "";
+    
+    // Add search input
+    const searchContainer = document.createElement("div");
+    searchContainer.className = "search-container";
+    searchContainer.innerHTML = `
+      <input type="text" id="database-search" placeholder="Search databases..." class="search-input">
+      <i class="fas fa-search search-icon"></i>
+    `;
+    dbListContainer.appendChild(searchContainer);
+    
+    // Add items container
+    dbItemsContainer = document.createElement("div");
+    dbItemsContainer.id = "database-items";
+    dbListContainer.appendChild(dbItemsContainer);
+    
+    // Get the newly created search input
+    searchInput = document.getElementById("database-search");
+  } else {
+    // Just clear the items container, preserving the search input
+    dbItemsContainer.innerHTML = "";
+  }
 
   const createDbButton = document.createElement("div");
   createDbButton.className = "create-db";
@@ -134,27 +168,72 @@ function displayDatabases(databases) {
     <span>New Database</span>
   `;
   createDbButton.addEventListener("click", showCreateDatabaseModal);
-  dbList.appendChild(createDbButton);
+  dbItemsContainer.appendChild(createDbButton);
 
-  databases.forEach((db) => {
-    const dbElement = document.createElement("div");
-    dbElement.className = "database-item";
-    dbElement.innerHTML = `
-      <i class="fas fa-database"></i>
-      <span>${db}</span>
-    `;
-    dbElement.addEventListener("click", () => {
-      loadCollections(db);
-      document
-        .querySelector(".document-header")
-        .classList.add("hidden-before-collection");
-      document.querySelector("#document-view").innerHTML = "";
+  // Apply current search filter
+  const searchTerm = searchInput ? searchInput.value.trim().toLowerCase() : "";
+  
+  const filteredDatabases = searchTerm 
+    ? databases.filter(db => db.toLowerCase().includes(searchTerm))
+    : databases;
+  
+  if (filteredDatabases.length === 0 && searchTerm) {
+    const noResults = document.createElement("div");
+    noResults.className = "no-results";
+    noResults.textContent = `No databases found matching "${searchTerm}"`;
+    dbItemsContainer.appendChild(noResults);
+  } else {
+    filteredDatabases.forEach((db) => {
+      const dbElement = document.createElement("div");
+      dbElement.className = "database-item";
+      
+      // Highlight matching text if there's a search term
+      let displayName = db;
+      if (searchTerm) {
+        const lowerDb = db.toLowerCase();
+        const index = lowerDb.indexOf(searchTerm);
+        if (index !== -1) {
+          const before = db.substring(0, index);
+          const match = db.substring(index, index + searchTerm.length);
+          const after = db.substring(index + searchTerm.length);
+          displayName = `${before}<span class="search-highlight">${match}</span>${after}`;
+        }
+      }
+      
+      dbElement.innerHTML = `
+        <i class="fas fa-database"></i>
+        <span>${displayName}</span>
+      `;
+      
+      dbElement.addEventListener("click", () => {
+        loadCollections(db);
+        document
+          .querySelector(".document-header")
+          .classList.add("hidden-before-collection");
+        document.querySelector("#document-view").innerHTML = "";
+      });
+      
+      dbElement.addEventListener("contextmenu", (e) =>
+        showDatabaseContextMenu(e, db)
+      );
+      
+      dbItemsContainer.appendChild(dbElement);
     });
-    dbElement.addEventListener("contextmenu", (e) =>
-      showDatabaseContextMenu(e, db)
-    );
-    dbList.appendChild(dbElement);
-  });
+  }
+  
+  // Add search input event listener if not already added
+  if (searchInput && !searchInput.hasListenerAttached) {
+    searchInput.addEventListener("input", () => {
+      const searchTerm = searchInput.value.trim().toLowerCase();
+      filterDatabases(searchTerm);
+    });
+    searchInput.hasListenerAttached = true;
+  }
+}
+
+// Function to filter databases without fetching them again
+function filterDatabases(searchTerm) {
+  displayDatabases(fullDatabaseList);
 }
 
 function showDatabaseContextMenu(event, dbName) {
@@ -430,8 +509,38 @@ function hideElementsBeforeCollection() {
 }
 
 function displayCollections(collections, dbName) {
-  const collectionList = document.getElementById("collection-list");
-  collectionList.innerHTML = "";
+  // Store the full list
+  fullCollectionList = collections;
+  
+  const collectionListContainer = document.getElementById("collection-list");
+  let collectionItemsContainer = document.getElementById("collection-items");
+  let searchInput = document.getElementById("collection-search");
+  
+  // Check if we need to create the structure
+  if (!collectionItemsContainer || !searchInput) {
+    // Clear container
+    collectionListContainer.innerHTML = "";
+    
+    // Add search input
+    const searchContainer = document.createElement("div");
+    searchContainer.className = "search-container";
+    searchContainer.innerHTML = `
+      <input type="text" id="collection-search" placeholder="Search collections..." class="search-input">
+      <i class="fas fa-search search-icon"></i>
+    `;
+    collectionListContainer.appendChild(searchContainer);
+    
+    // Add items container
+    collectionItemsContainer = document.createElement("div");
+    collectionItemsContainer.id = "collection-items";
+    collectionListContainer.appendChild(collectionItemsContainer);
+    
+    // Get the newly created search input
+    searchInput = document.getElementById("collection-search");
+  } else {
+    // Just clear the items container, preserving the search input
+    collectionItemsContainer.innerHTML = "";
+  }
 
   const createCollectionButton = document.createElement("div");
   createCollectionButton.className = "create-collection";
@@ -442,23 +551,68 @@ function displayCollections(collections, dbName) {
   createCollectionButton.addEventListener("click", () =>
     showCreateCollectionModal(dbName)
   );
-  collectionList.appendChild(createCollectionButton);
+  collectionItemsContainer.appendChild(createCollectionButton);
 
-  collections.forEach((collection) => {
-    const collectionElement = document.createElement("div");
-    collectionElement.className = "collection-item";
-    collectionElement.innerHTML = `
-      <i class="fas fa-folder"></i>
-      <span>${collection}</span>
-    `;
-    collectionElement.addEventListener("click", () =>
-      loadDocuments(dbName, collection)
-    );
-    collectionElement.addEventListener("contextmenu", (e) =>
-      showCollectionContextMenu(e, dbName, collection)
-    );
-    collectionList.appendChild(collectionElement);
-  });
+  // Apply current search filter
+  const searchTerm = searchInput ? searchInput.value.trim().toLowerCase() : "";
+  
+  const filteredCollections = searchTerm 
+    ? collections.filter(collection => collection.toLowerCase().includes(searchTerm))
+    : collections;
+  
+  if (filteredCollections.length === 0 && searchTerm) {
+    const noResults = document.createElement("div");
+    noResults.className = "no-results";
+    noResults.textContent = `No collections found matching "${searchTerm}"`;
+    collectionItemsContainer.appendChild(noResults);
+  } else {
+    filteredCollections.forEach((collection) => {
+      const collectionElement = document.createElement("div");
+      collectionElement.className = "collection-item";
+      
+      // Highlight matching text if there's a search term
+      let displayName = collection;
+      if (searchTerm) {
+        const lowerCollection = collection.toLowerCase();
+        const index = lowerCollection.indexOf(searchTerm);
+        if (index !== -1) {
+          const before = collection.substring(0, index);
+          const match = collection.substring(index, index + searchTerm.length);
+          const after = collection.substring(index + searchTerm.length);
+          displayName = `${before}<span class="search-highlight">${match}</span>${after}`;
+        }
+      }
+      
+      collectionElement.innerHTML = `
+        <i class="fas fa-folder"></i>
+        <span>${displayName}</span>
+      `;
+      
+      collectionElement.addEventListener("click", () =>
+        loadDocuments(dbName, collection)
+      );
+      
+      collectionElement.addEventListener("contextmenu", (e) =>
+        showCollectionContextMenu(e, dbName, collection)
+      );
+      
+      collectionItemsContainer.appendChild(collectionElement);
+    });
+  }
+  
+  // Add search input event listener if not already added
+  if (searchInput && !searchInput.hasListenerAttached) {
+    searchInput.addEventListener("input", () => {
+      const searchTerm = searchInput.value.trim().toLowerCase();
+      filterCollections(searchTerm, dbName);
+    });
+    searchInput.hasListenerAttached = true;
+  }
+}
+
+// Function to filter collections without fetching them again
+function filterCollections(searchTerm, dbName) {
+  displayCollections(fullCollectionList, dbName);
 }
 
 function showCreateCollectionModal(dbName) {

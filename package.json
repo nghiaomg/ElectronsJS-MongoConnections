@@ -1,6 +1,6 @@
 {
   "name": "memory-mongo-connections",
-  "version": "1.4.2",
+  "version": "2.1",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
@@ -11,17 +11,20 @@
   "author": "nghiaomg",
   "license": "ISC",
   "devDependencies": {
+    "cross-env": "^7.0.3",
     "electron": "^32.0.2",
-    "electron-builder": "^25.0.5",
-    "cross-env": "^7.0.3"
+    "electron-builder": "^25.0.5"
   },
   "dependencies": {
+    "@google/genai": "^0.13.0",
+    "electron-store": "^10.0.1",
     "mongodb": "^6.8.0",
+    "node-fetch": "^3.3.2",
     "path": "^0.12.7"
   },
   "build": {
-    "appId": "com.MemoryPlatform.ElectronsJSMongoConnections",
-    "productName": "ElectronsJS-MongoConnections",
+    "appId": "com.MemoryPlatform.AskMongo",
+    "productName": "AskMongo",
     "directories": {
       "output": "dist"
     },
