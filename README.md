@@ -2,7 +2,7 @@
 
 AskMongo (trước đây là ElectronsJS-MongoConnections) là một ứng dụng desktop được xây dựng bằng Electron và JavaScript, cho phép người dùng kết nối và quản lý cơ sở dữ liệu MongoDB một cách trực quan với trợ lý AI tích hợp.
 
-![Demo](https://ik.imagekit.io/0lpnflx37/images/MongoConnection/Screenshot%202025-05-07%20180731.png?updatedAt=1746616179035)
+![Demo](https://ik.imagekit.io/0lpnflx37/images/MongoConnection/Screenshot%202025-05-11%20224547.png)
 
 ## Tính năng mới trong v2.1
 

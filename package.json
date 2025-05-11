@@ -1,6 +1,6 @@
 {
   "name": "memory-mongo-connections",
-  "version": "2.1",
+  "version": "2.1.0",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
