@@ -20,6 +20,9 @@ contextBridge.exposeInMainWorld('electronAPI', {
   closeWindow: () => ipcRenderer.send('close-window'),
   onMaximize: (callback) => ipcRenderer.on('window-maximized', callback),
   onUnmaximize: (callback) => ipcRenderer.on('window-unmaximized', callback),
+  // Memory management APIs (only available in development)
+  forceGC: () => ipcRenderer.invoke('gc'), 
+  getMemoryStats: () => ipcRenderer.invoke('get-memory-stats'),
 })
 
 console.log('Preload: electronAPI đã được expose')
