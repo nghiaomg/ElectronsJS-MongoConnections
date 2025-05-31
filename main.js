@@ -758,40 +758,115 @@ ipcMain.handle(
       // This allows the AI to generate code with "db.collection" pattern
       const safeQueryCode = queryCode
         .replace(/db\.collection\(['"](.*?)['"]\)/g, 'collection')
-        .replace(new RegExp(`db\\.${collectionName}`, 'g'), 'collection');
+        .replace(new RegExp(`db\\.${collectionName}`, 'g'), 'collection')
+        // Fix ObjectId calls to always use 'new' keyword
+        .replace(/ObjectId\(/g, 'new ObjectId(')
+        // Remove duplicate 'new new' if it already had 'new'
+        .replace(/new new ObjectId\(/g, 'new ObjectId(');
       
-      // Create a safe function to execute the query
-      // We ensure only find, aggregate, and count operations are allowed
+      // Define allowed MongoDB operations (expanded to include write operations)
       const allowedPatterns = [
+        // Read operations
         /collection\.find\(/,
+        /collection\.findOne\(/,
         /collection\.aggregate\(/,
         /collection\.countDocuments\(/,
-        /collection\.distinct\(/
+        /collection\.estimatedDocumentCount\(/,
+        /collection\.distinct\(/,
+        
+        // Write operations
+        /collection\.insertOne\(/,
+        /collection\.insertMany\(/,
+        /collection\.updateOne\(/,
+        /collection\.updateMany\(/,
+        /collection\.replaceOne\(/,
+        /collection\.deleteOne\(/,
+        /collection\.deleteMany\(/,
+        /collection\.findOneAndUpdate\(/,
+        /collection\.findOneAndReplace\(/,
+        /collection\.findOneAndDelete\(/,
+        /collection\.bulkWrite\(/,
+        
+        // Index operations
+        /collection\.createIndex\(/,
+        /collection\.createIndexes\(/,
+        /collection\.dropIndex\(/,
+        /collection\.dropIndexes\(/,
+        /collection\.listIndexes\(/
       ];
       
-      // Verify the query is one of the allowed operations
+      // Verify the query contains allowed operations
       const isAllowedOperation = allowedPatterns.some(pattern => 
         pattern.test(safeQueryCode)
       );
       
-      if (!isAllowedOperation) {
-        throw new Error("Only read operations (find, aggregate, count, distinct) are allowed");
+      // Block dangerous operations that could affect the database structure
+      const dangerousPatterns = [
+        /\.drop\(\)/,
+        /\.dropDatabase\(\)/,
+        /db\.dropDatabase\(/,
+        /db\.drop\(/,
+        /client\./,
+        /process\./,
+        /require\(/,
+        /import\(/,
+        /eval\(/,
+        /Function\(/,
+        /setTimeout\(/,
+        /setInterval\(/
+      ];
+      
+      const hasDangerousOperation = dangerousPatterns.some(pattern => 
+        pattern.test(safeQueryCode)
+      );
+      
+      if (hasDangerousOperation) {
+        throw new Error("Dangerous operations (drop, require, eval, etc.) are not allowed for security reasons");
       }
       
+      if (!isAllowedOperation) {
+        throw new Error("Only MongoDB collection operations are allowed. Please use valid MongoDB collection methods.");
+      }
+      
+      console.log("Original query code:", queryCode);
+      console.log("Processed query code:", safeQueryCode);
+      
       // Create the executable function with the query code
-      const executeQuery = new Function('collection', `
+      const executeQuery = new Function('collection', 'ObjectIdClass', `
         return (async () => {
           try {
-            const result = await ${safeQueryCode}.toArray();
-            return result;
+            // Make ObjectId available in the function scope
+            const ObjectId = ObjectIdClass;
+            
+            console.log("Executing query code:", \`${safeQueryCode}\`);
+            
+            const result = await ${safeQueryCode};
+            
+            console.log("Query execution result:", result);
+            
+            // Handle different types of results
+            if (result && typeof result.toArray === 'function') {
+              // For cursors (find, aggregate)
+              return await result.toArray();
+            } else if (result && (result.acknowledged !== undefined || result.insertedId || result.modifiedCount !== undefined || result.deletedCount !== undefined)) {
+              // For write operation results
+              return result;
+            } else if (Array.isArray(result)) {
+              // For arrays
+              return result;
+            } else {
+              // For other results (count, distinct, etc.)
+              return result;
+            }
           } catch (e) {
+            console.error("Error in query execution:", e);
             throw e;
           }
         })();
       `);
       
-      // Execute the query
-      const result = await executeQuery(collection);
+      // Execute the query with ObjectId available
+      const result = await executeQuery(collection, ObjectId);
       return customStringify(result);
     } catch (error) {
       console.error("Error executing query:", error);

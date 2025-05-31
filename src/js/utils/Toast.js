@@ -125,6 +125,33 @@ export class Toast {
       return "MongoDB chỉ cho phép các thao tác đọc (find, aggregate, countDocuments, distinct) trong chế độ này. Vui lòng sử dụng truy vấn khác.";
     }
 
+    // Handle new error messages
+    if (message.includes("Only MongoDB collection operations are allowed")) {
+      return "Chỉ cho phép các thao tác MongoDB collection. Vui lòng sử dụng các phương thức như find(), updateOne(), insertOne(), deleteOne(), v.v.";
+    }
+
+    if (message.includes("Dangerous operations")) {
+      return "Thao tác nguy hiểm không được phép vì lý do bảo mật. Không thể sử dụng drop, require, eval hoặc các lệnh hệ thống.";
+    }
+
+    // Handle common MongoDB errors
+    if (message.includes("MongoServerError")) {
+      if (message.includes("duplicate key")) {
+        return "Lỗi khóa trùng lặp: Đã tồn tại document với giá trị này.";
+      }
+      if (message.includes("validation failed")) {
+        return "Lỗi xác thực dữ liệu: Dữ liệu không đúng định dạng yêu cầu.";
+      }
+      if (message.includes("not found")) {
+        return "Không tìm thấy document hoặc collection được chỉ định.";
+      }
+    }
+
+    // Handle syntax errors
+    if (message.includes("SyntaxError")) {
+      return "Lỗi cú pháp trong truy vấn MongoDB. Vui lòng kiểm tra lại cú pháp.";
+    }
+
     if (operation) {
       message = `Lỗi khi ${operation}: ${message}`;
     }
@@ -170,6 +197,24 @@ export class Toast {
       help.className = "error-help";
       help.textContent =
         "Gợi ý: Hãy sử dụng các lệnh find, aggregate, countDocuments hoặc distinct thay vì lệnh cập nhật/xóa.";
+      container.appendChild(help);
+    } else if (errorMessage.includes("Only MongoDB collection operations are allowed")) {
+      const help = document.createElement("span");
+      help.className = "error-help";
+      help.textContent =
+        "Gợi ý: Sử dụng các phương thức MongoDB như collection.find(), collection.updateOne(), collection.insertOne(), collection.deleteOne().";
+      container.appendChild(help);
+    } else if (errorMessage.includes("Dangerous operations")) {
+      const help = document.createElement("span");
+      help.className = "error-help";
+      help.textContent =
+        "Gợi ý: Tránh sử dụng các lệnh drop, require, eval. Chỉ sử dụng các thao tác collection an toàn.";
+      container.appendChild(help);
+    } else if (errorMessage.includes("SyntaxError")) {
+      const help = document.createElement("span");
+      help.className = "error-help";
+      help.textContent =
+        "Gợi ý: Kiểm tra cú pháp MongoDB. Ví dụ: collection.find({name: 'John'}), collection.updateOne({_id: ObjectId('...')}, {$set: {name: 'Jane'}}).";
       container.appendChild(help);
     }
 
